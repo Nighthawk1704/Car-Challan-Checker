@@ -379,9 +379,9 @@ body { background:
 }
 
 /* Status colors */
-.dot-green { background: #16a34a; }   /* Paid */
-.dot-red { background: #dc2626; }     /* Unpaid / Due */
-.dot-amber { background: #f59e0b; }   /* Other / pending */
-.dot-gray { background: #9ca3af; }    /* Fallback */
+.dot-green { background: #16a34a; }   
+.dot-red { background: #dc2626; }     
+.dot-amber { background: #f59e0b; }  
+.dot-gray { background: #9ca3af; }    
 
 
