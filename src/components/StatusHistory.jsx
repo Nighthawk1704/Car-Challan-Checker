@@ -1,66 +1,79 @@
 import { getHistoryFor } from '../utils/status.js'
 import Badge from './ui/Badge.jsx'
 
-function download(filename, text) {
+function download(filename, text, type = 'text/plain') {
   const a = document.createElement('a')
-  a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }))
+  a.href = URL.createObjectURL(new Blob([text], { type }))
   a.download = filename
   a.click()
   URL.revokeObjectURL(a.href)
 }
 
+function toCSV(rows) {
+  return rows.map(r => r.map(x => `"${String(x ?? '').replace(/"/g, '""')}"`).join(',')).join('\n')
+}
+
 export default function StatusHistory({ vehicleNo, challan }) {
-  const history = getHistoryFor(vehicleNo, challan)
+  const history = getHistoryFor(vehicleNo, challan) || []
 
   function exportJSON() {
     const payload = { vehicleNo, challan, history }
-    download(`status-history-${vehicleNo}-${challan.id}.json`, JSON.stringify(payload, null, 2))
+    download(
+      `status-history-${vehicleNo}-${challan.id}.json`,
+      JSON.stringify(payload, null, 2),
+      'application/json'
+    )
   }
 
   function exportCSV() {
     const head = ['timestamp', 'status', 'note']
     const rows = history.map(h => [h.timestamp, h.status, h.note ?? ''])
-    const csv = [head, ...rows]
-      .map(r => r.map(x => `"${String(x).replace(/"/g, '""')}"`).join(','))
-      .join('\n')
-    download(`status-history-${vehicleNo}-${challan.id}.csv`, csv)
+    download(
+      `status-history-${vehicleNo}-${challan.id}.csv`,
+      toCSV([head, ...rows]),
+      'text/csv'
+    )
   }
 
-  function getDotClass(status) {
-    if (!status) return 'timeline-dot dot-gray'
-    const s = status.toLowerCase()
-    if (s === 'paid') return 'timeline-dot dot-green'
-    if (s === 'unpaid' || s === 'due') return 'timeline-dot dot-red'
-    return 'timeline-dot dot-amber'
-  }
+  const latestStatus = history.at(-1)?.status || 'Unpaid'
 
   return (
     <div className="history card card-pad">
-      <div className="history-header">
-        <h3>Status History</h3>
-        <Badge status={history.at(-1)?.status || 'Unpaid'} />
+      <div className="row" style={{ marginBottom: 8 }}>
+        <h3>Status history</h3>
+        <Badge status={latestStatus} />
       </div>
 
-      <div className="actions">
-        <button className="btn btn-icon" onClick={exportCSV}>⬇ CSV</button>
-        <button className="btn btn-icon btn-secondary" onClick={exportJSON}>⬇ JSON</button>
+      <div className="actions" style={{ marginBottom: 10 }}>
+        <button className="btn btn-icon" onClick={exportCSV} title="Export CSV">CSV</button>
+        <button className="btn btn-icon btn-secondary" onClick={exportJSON} title="Export JSON">JSON</button>
       </div>
 
-      <div className="timeline">
-        {history.length === 0 && <p className="muted">No history available.</p>}
-        {history.map((h, i) => (
-          <div className="timeline-item" key={i}>
-            <div className={getDotClass(h.status)} aria-hidden />
-            <div className="timeline-content">
-              <div className="timeline-row">
-                <strong>{h.status}</strong>
-                <span className="muted">{new Date(h.timestamp).toLocaleString()}</span>
+      {history.length === 0 ? (
+        <p className="muted">No history available.</p>
+      ) : (
+        <ul className="audit">
+          {history.map((h, i) => (
+            <li key={i} className="audit-row">
+              <div className={`pill ${
+                h.status === 'Paid' ? 'ok'
+                  : (h.status === 'Unpaid' || h.status === 'Due') ? 'warn'
+                  : 'neut'
+              }`}>
+                {h.status}
               </div>
-              {h.note && <p className="muted note">{h.note}</p>}
-            </div>
-          </div>
-        ))}
-      </div>
+              <div className="audit-main">
+                <div className="audit-top">
+                  <span className="audit-time">
+                    {new Date(h.timestamp).toLocaleString()}
+                  </span>
+                </div>
+                {h.note && <div className="audit-note muted">{h.note}</div>}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

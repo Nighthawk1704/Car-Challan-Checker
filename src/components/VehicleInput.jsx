@@ -1,46 +1,98 @@
 import { useState } from 'react'
 
-const IN_PLATE_REGEX = /^(?:[A-Z]{2}\d{1,2}[A-Z]{0,2}\d{4}|[A-Z]{2}\s?\d{2}\s?[A-Z]{1,2}\s?\d{4})$/i
-
 export default function VehicleInput({ onSearch, loading }) {
-  const [plate, setPlate] = useState('')
-  const [touched, setTouched] = useState(false)
+  const [value, setValue] = useState('')
+  const [error, setError] = useState('')
 
-  const normalized = plate.trim().toUpperCase().replace(/\s+/g, '')
-  const valid = IN_PLATE_REGEX.test(normalized)
-
-  function submit(e) {
-    e.preventDefault()
-    setTouched(true)
-    if (!valid) return
-    onSearch(normalized)
+  // Uppercase; remove spaces; allow A–Z and 0–9 only
+  function normalize(v) {
+    return String(v).toUpperCase().replace(/\s+/g, '').replace(/[^A-Z0-9]/g, '')
   }
 
-  function quickFill(p){ setPlate(p) }
+  // Lenient India plate check (DL10AB1234, KA01AA0001, etc.)
+  function isValidPlate(v) {
+    return /^[A-Z]{2}\d{1,2}[A-Z]{1,2}\d{3,4}$/.test(v)
+  }
+
+  function handleChange(e) {
+    const v = normalize(e.target.value)
+    setValue(v)
+    if (error) setError('')
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    const v = normalize(value)
+    if (!isValidPlate(v)) {
+      setError('Enter a valid vehicle number (e.g., DL10AB1234).')
+      return
+    }
+    onSearch?.(v)
+  }
+
+  const valid = isValidPlate(value)
 
   return (
-    <form className="vehicle-form" onSubmit={submit} noValidate>
-      <label htmlFor="vehicleNo">Vehicle Number</label>
-      <div className="input-row">
-        <input
-          id="vehicleNo"
-          name="vehicleNo"
-          placeholder="e.g., DL10AB1234"
-          value={plate}
-          onChange={(e) => setPlate(e.target.value)}
-          aria-invalid={touched && !valid}
-          aria-describedby="vehicleNoHelp"
-          disabled={loading}
-        />
-        <button className="btn" type="submit" disabled={!valid || loading}>
-          {loading ? 'Checking...' : 'Check Challans'}
-        </button>
+    <form className="vehicle-form" onSubmit={handleSubmit} noValidate>
+      <div className="form-row">
+        <div className="field">
+          <label htmlFor="vehicleNo">Vehicle number</label>
+          <div className="input-wrap">
+            <input
+              id="vehicleNo"
+              className="input input-lg"
+              type="text"
+              placeholder="DL10AB1234"
+              value={value}
+              onChange={handleChange}
+              autoComplete="off"
+              inputMode="latin"
+              aria-invalid={!valid && value ? 'true' : 'false'}
+              aria-describedby="vehicleHelp"
+            />
+          </div>
+          <div id="vehicleHelp" className={`helper ${error ? 'error-text' : ''}`}>
+            {error ? error : 'Format: 2 letters • 1–2 digits • 1–2 letters • 3–4 digits'}
+          </div>
+        </div>
+
+        <div className="form-actions">
+          <button
+            type="submit"
+            className="btn btn-lg"
+            disabled={!valid || loading}
+            aria-disabled={!valid || loading}
+          >
+            {loading ? (
+              <span className="btn-content">
+                <span className="spinner" aria-hidden />
+                Checking…
+              </span>
+            ) : (
+              <span className="btn-content">
+                <SearchIcon />
+                Check challans
+              </span>
+            )}
+          </button>
+        </div>
       </div>
-      <small id="vehicleNoHelp" className={touched && !valid ? 'help error' : 'help'}>
-        Try: <button type="button" className="chip" onClick={()=>quickFill('DL10AB1234')}>DL10AB1234</button>
-        <button type="button" className="chip" onClick={()=>quickFill('MH12XY9876')}>MH12XY9876</button>
-        <button type="button" className="chip" onClick={()=>quickFill('KA05MN2468')}>KA05MN2468</button>
-      </small>
     </form>
+  )
+}
+
+// Minimal inline search icon (no libraries)
+function SearchIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="icon-16"
+      aria-hidden
+      fill="none"
+      stroke="currentColor"
+    >
+      <circle cx="11" cy="11" r="6" strokeWidth="1.6" />
+      <path d="M20 20l-3.5-3.5" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
   )
 }
