@@ -1,0 +1,28 @@
+[
+  {
+    "vehicleNo": "DL10AB1234",
+    "challans": [
+      { "id": 101, "type": "Over Speeding", "amount": 2000, "date": "2025-08-15T10:30:00.000Z", "status": "Unpaid", "location": "Outer Ring Road" },
+      { "id": 102, "type": "Wrong Parking", "amount": 500, "date": "2025-07-20T08:10:00.000Z", "status": "Paid", "location": "MG Road" },
+      { "id": 103, "type": "Signal Jump", "amount": 1000, "date": "2025-06-10T12:00:00.000Z", "status": "Unpaid", "location": "Connaught Place" }
+    ]
+  },
+  {
+    "vehicleNo": "MH12XY9876",
+    "challans": [
+      { "id": 201, "type": "No Helmet", "amount": 1000, "date": "2025-08-01T07:00:00.000Z", "status": "Unpaid", "location": "Western Express Highway" },
+      { "id": 202, "type": "Over Speeding", "amount": 1500, "date": "2025-05-15T12:00:00.000Z", "status": "Paid", "location": "Bandra-Worli Sea Link" }
+    ]
+  },
+  {
+    "vehicleNo": "KA05MN2468",
+    "challans": [
+      { "id": 301, "type": "No Seatbelt", "amount": 1000, "date": "2025-07-30T09:00:00.000Z", "status": "Paid", "location": "Electronic City" },
+      { "id": 302, "type": "Using Mobile Phone", "amount": 2000, "date": "2025-08-20T14:00:00.000Z", "status": "Unpaid", "location": "Whitefield" }
+    ]
+  },
+  {
+    "vehicleNo": "TN01CD5678",
+    "challans": []
+  }
+]
