@@ -1,12 +1,70 @@
-# React + Vite
+# 🚗 Car Challan Checker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React + Vite web application to **search, filter, and manage traffic challans**.  
+Built as part of the **Anslation Frontend Internship assignment** — designed to feel like a real product, not just a demo.
 
-Currently, two official plugins are available:
+🔗 **Live Demo:** [https://car-challan-checker-eosin.vercel.app/](https://car-challan-checker-eosin.vercel.app/) 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 🔍 **Search challans** by vehicle number (mock challan data provided for demo)
+- 🌍 **Location detection** via [ipapi.co](https://ipapi.co) API  
+  - Shows detected city & region automatically  
+  - If free API quota is exceeded → clean fallback message
+- 📊 **Filter & sort challans**
+  - By **status** (All / Paid / Unpaid)
+  - By **date range**
+  - Sort by **date** or **amount**
+- 💰 **Total summary**  
+  - e.g., *3 challans · Total ₹5,000*
+- 📝 **Status history (audit log)**
+  - Logs every Paid / Unpaid change with timestamp
+  - Export history as **CSV** or **JSON**
+- 📤 **Export challans**
+  - Export **all visible challans** (after filters) to CSV or JSON
+- 📱 **Responsive UI** — clean layouts for desktop & mobile
+- 🎨 **Professional theme**
+  - Modern cards, chips, buttons, and accessible color palette
+- ♿ **Accessible**
+  - Semantic HTML, focus styles, aria labels
+
+---
+
+## 🛠️ Tech Stack
+
+- ⚛️ **React 18** (functional components + hooks)
+- ⚡ **Vite** (bundler & dev server)
+- 🎨 **Plain CSS** (Flexbox + Grid, responsive design)
+- 🗄️ **LocalStorage** (persist status history)
+- 📊 **Mock JSON** challan dataset
+- 🌍 **ipapi.co API** for geolocation
+- ☁️ **Vercel** for deployment (CI/CD auto-builds from GitHub)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/<your-username>/car-challan-checker.git
+cd car-challan-checker
+```
+### 2. 2. Install dependencies
+ ```bash
+ npm install
+```
+### 3. Run locally
+```bash
+npm run dev
+# open http://localhost:5173
+```
+### 4. Build for production
+```bash
+npm run build
+```
+
+
+
+
